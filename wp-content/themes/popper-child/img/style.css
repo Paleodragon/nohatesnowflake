@@ -1,0 +1,192 @@
+/*
+Theme Name: Popper Child Theme
+Theme URI: http://www.nohatesnowflake.com/popper-child
+Author: Rebecca W Foster
+Author URI: http://www.cateyecoding.com
+Description: A child theme based on Morten's popper theme.
+Version: 1.0.2
+Template: popper
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: popper
+Tags: accessibility-ready, light, one-column, two-columns, left-sidebar, right-sidebar, responsive-layout, custom-colors, custom-header, custom-menu, featured-images, theme-options, threaded-comments, translation-ready
+*/
+@import url("../popper/style.css");
+
+html,
+body {
+    background-color: #6B3B23; 
+    
+}
+
+/*site-wide styles*/
+header#masthead.site-header {
+    background-color: #6B3B23;
+}
+
+.entry-title {
+    display: none;
+}
+
+.site-title a {
+    color: #000;
+    text-shadow: 3px 3px #125570;
+    font-size: 2.5em;
+    font-family: 'Oswald', sans-serif;
+}
+.site-title a:hover {
+    text-decoration: none;
+    color: #1F2122;
+}
+
+div.site-info,
+div.site-info a {
+    color: #000;
+}
+
+nav#site-navigation.main-navigation {
+    text-shadow: 2px 2px #000;
+    background-color: #125570;
+}
+
+a,
+nav#site-navigation.main-navigation a:hover {
+    text-decoration: none;
+}
+
+button.menu-toggle {
+    background-color: #125570;
+    border: 2px solid #000;
+}
+
+button.menu-toggle a {
+    text-decoration: none;
+}
+
+button.menu-toggle:hover {
+    background-color: #466673;
+}
+
+/*homepage styles*/
+
+
+.site-description {
+    display: none;
+}
+
+div#primary.content-area {
+    background: url(img/seattle-march.jpeg) no-repeat scroll center;
+}
+
+img.aligncenter.wp-image-102 {
+    max-width: 50%;
+    margin-top: 15%;
+    border-radius: 15%;
+    border: 8px solid #000;
+}
+
+article#post-2.post-2.page.type-page.status-publish.hentry div.entry-content {
+    background: rgba(255, 255, 255, 0.0);
+}
+/*widget styles*/
+
+div#secondary.widget-area.clear {
+    background-color: #6B3B23;
+    padding: 0;
+}
+
+aside#search-2.widget.widget_search {
+    background-color: #125570;
+    margin-top: 2%;
+}
+
+
+/*footer styles*/
+
+footer#colophon.site-footer {
+    
+    background-color: #6B3B23;
+}
+
+.footer-navigation {
+    margin: -2em auto 4em;
+    text-shadow: 2px 2px #000;
+    background-color: #125570;
+}
+.footer-navigation ul {
+    list-style-type: none; 
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+}
+.footer-navigation a {
+    display: block;
+    padding: .5em 1em;
+}
+
+.footer-navigation a:hover,
+.footer-navigation a:focus {
+    outline: 1px solid #fff;
+}
+
+/*blog excerpt page styles*/
+
+div.entry-meta {
+    background-color: #6B3B23;
+    margin-top: -5%;
+    margin-bottom: 8%;
+}
+div.entry-header {
+    margin-left: -25%;
+}
+div.entry-content {
+    background: rgba(255, 255, 255, 0.7);
+}
+
+/*blog page styles*/
+
+div#respond.comment-respond {
+    background: rgba(255, 255, 255, 0.7);
+    margin-top: -10%;
+    margin-left: -8%;
+    margin-right: -8%;
+    padding-left: 5%;
+    padding-right: 5%;
+}
+
+input#submit.submit {
+    background-color: #125570;
+    color: #fff;
+    border: 2px solid #000;
+}
+input#submit.submit:hover {
+    background-color: #466673; 
+}
+
+/*contact page styles*/
+
+div#wpgmza_map {
+    margin-top: 5%;
+}
+
+div.nf-form-content {
+    background-color: #6B3B23;
+    margin-bottom: 5%;
+    padding: 5%;
+    border-radius: 2%;
+}
+input#nf-field-8.ninja-forms-field.nf-element {
+    background-color: #125570;
+    color: #fff;
+}
+input#nf-field-8.ninja-forms-field.nf-element:hover {
+    background-color: #466673;
+}
+
+/*lapel pin styles*/
+
+.soliloquy-container { 
+    border: 5px solid #000 !important;
+	float: center !important;
+	margin-left: 22% !important; 
+}

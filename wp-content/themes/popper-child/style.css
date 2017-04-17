@@ -78,7 +78,7 @@ div#primary.content-area {
     background: url(img/seattle-march.jpeg) no-repeat scroll center;
 }
 
-img.wp-image-42.aligncenter {
+img.aligncenter.wp-image-102 {
     max-width: 50%;
     margin-top: 15%;
     border-radius: 15%;
@@ -186,5 +186,7 @@ input#nf-field-8.ninja-forms-field.nf-element:hover {
 /*lapel pin styles*/
 
 .soliloquy-container { 
-  border: 5px solid #000; 
+    border: 5px solid #000 !important;
+	float: left !important;
+	margin-left: 22% !important; 
 }

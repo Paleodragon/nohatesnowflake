@@ -7,3 +7,4 @@ function popper_child_setup() {
 }
 add_action( 'after_setup_theme', 'popper_child_setup');
 ?>
+
