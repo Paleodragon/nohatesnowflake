@@ -67,6 +67,19 @@ button.menu-toggle:hover {
     background-color: #466673;
 }
 
+.continue-reading a, 
+input#give-purchase-button.give-submit.give-btn, 
+input#submit.submit {
+    background-color: #125570;
+    color: #fff;
+    border: 2px solid #000;
+}
+.continue-reading a:hover, 
+input#give-purchase-button.give-submit.give-btn:hover,
+input#submit.submit:hover {
+    background-color: #466673; 
+}
+
 /*homepage styles*/
 
 
@@ -154,15 +167,6 @@ div#respond.comment-respond {
     padding-right: 5%;
 }
 
-input#submit.submit {
-    background-color: #125570;
-    color: #fff;
-    border: 2px solid #000;
-}
-input#submit.submit:hover {
-    background-color: #466673; 
-}
-
 /*contact page styles*/
 
 div#wpgmza_map {
@@ -190,3 +194,4 @@ input#nf-field-8.ninja-forms-field.nf-element:hover {
 	float: left !important;
 	margin-left: 22% !important; 
 }
+
