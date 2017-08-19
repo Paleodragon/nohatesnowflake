@@ -101,8 +101,11 @@ class NF_AJAX_Controllers_Submission extends NF_Abstracts_Controller
         |--------------------------------------------------------------------------
         */
 
-        $form_fields = $this->_form_cache['fields'];
-        if( empty( $form_fields ) ) $form_fields = Ninja_Forms()->form( $this->_form_id )->get_fields();
+        if( $this->is_preview() ){
+            $form_fields = $this->_form_cache[ 'fields' ];
+        } else {
+            $form_fields = Ninja_Forms()->form($this->_form_id)->get_fields();
+        }
 
         /**
          * The Field Processing Loop.
@@ -111,7 +114,7 @@ class NF_AJAX_Controllers_Submission extends NF_Abstracts_Controller
          * For performance reasons, this should be the only time that the fields array is traversed.
          * Anything needing to loop through fields should integrate here.
          */
-         $validate_fields = apply_filters( 'ninja_forms_validate_fields', true, $this->_data );
+        $validate_fields = apply_filters( 'ninja_forms_validate_fields', true, $this->_data );
         foreach( $form_fields as $key => $field ){
 
             if( is_object( $field ) ) {
@@ -177,6 +180,37 @@ class NF_AJAX_Controllers_Submission extends NF_Abstracts_Controller
             $field_merge_tags->add_field( $field );
 
             $this->_data[ 'fields' ][ $field_id ] = $field;
+            $this->_data[ 'fields_by_key' ][ $field[ 'key' ] ] = $field;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Check for unique field settings.
+        |--------------------------------------------------------------------------
+        */
+        if ( isset ( $this->_data[ 'settings' ][ 'unique_field' ] ) && ! empty( $this->_data[ 'settings' ][ 'unique_field' ] ) ) {
+            /*
+             * Get our unique field
+             */
+            $unique_field_key = $this->_data[ 'settings' ][ 'unique_field' ];
+            $unique_field_error = $this->_data[ 'settings' ][ 'unique_field_error' ];
+            $unique_field_id = $this->_data[ 'fields_by_key' ][ $unique_field_key ][ 'id' ];
+            $unique_field_value = $this->_data[ 'fields_by_key' ][ $unique_field_key ][ 'value' ];
+            if ( is_array( $unique_field_value ) ) {
+                $unique_field_value = serialize( $unique_field_value );
+            }
+
+            /*
+             * Check our db for the value submitted.
+             */
+            
+            global $wpdb;
+            $sql = $wpdb->prepare( "SELECT COUNT(meta_id) FROM `" . $wpdb->prefix . "postmeta` WHERE meta_key = '_field_%d' AND meta_value = '%s'", $unique_field_id, $unique_field_value );
+            $result = $wpdb->get_results( $sql, 'ARRAY_N' );
+            if ( intval( $result[ 0 ][ 0 ] ) > 0 ) {
+                $this->_errors['fields'][ $unique_field_id ] = array( 'slug' => 'unique_field', 'message' => $unique_field_error );
+                $this->_respond();
+            }
         }
 
         /*
@@ -192,7 +226,17 @@ class NF_AJAX_Controllers_Submission extends NF_Abstracts_Controller
              */
             foreach( $this->_form_cache[ 'settings' ][ 'calculations' ] as $calc ){
                 $eq = apply_filters( 'ninja_forms_calc_setting', $calc[ 'eq' ] );
-                $calcs_merge_tags->set_merge_tags( $calc[ 'name' ], $eq );
+
+                // Scrub unmerged tags (ie deleted/non-existent fields/calcs, etc).
+                $eq = preg_replace( '/{([a-zA-Z0-9]|:|_|-)*}/', 0, $eq);
+
+                $dec = ( isset( $calc[ 'dec' ] ) && 0 <= $calc[ 'dec' ] ) ? $calc[ 'dec' ] : 2;
+                $calcs_merge_tags->set_merge_tags( $calc[ 'name' ], $eq, $dec, $this->_form_data['settings']['decimal_point'], $this->_form_data['settings']['thousands_sep'] );
+                $this->_data[ 'extra' ][ 'calculations' ][ $calc[ 'name' ] ] = array(
+                    'raw' => $calc[ 'eq' ],
+                    'parsed' => $eq,
+                    'value' => $calcs_merge_tags->get_formatted_calc_value( $calc[ 'name' ], $dec, $this->_form_data['settings']['decimal_point'], $this->_form_data['settings']['thousands_sep'] ),
+                );
             }
         }
 
@@ -204,10 +248,14 @@ class NF_AJAX_Controllers_Submission extends NF_Abstracts_Controller
         */
 
         /*
-         * TODO: Add async fix for duplicate actions in Form Cache.
-         * Bypass form cache for actions.
+         * TODO: This section has become convoluted, but will be refactored along with the submission controller.
          */
-        if( ! $this->is_preview() ) {
+
+        if( isset( $this->_data[ 'resume' ] ) && $this->_data[ 'resume' ] ){
+            // On Resume Submission, the action data is loaded form the session.
+            // This section intentionally left blank.
+        } elseif( ! $this->is_preview() ) {
+            // Published forms rely on the Database for the "truth" about Actions.
             $actions = Ninja_Forms()->form($this->_form_id)->get_actions();
             $this->_form_cache[ 'actions' ] = array();
             foreach( $actions as $action ){
@@ -218,6 +266,7 @@ class NF_AJAX_Controllers_Submission extends NF_Abstracts_Controller
                 );
             }
         } else {
+            // Previews uses user option for stored data.
             $preview_data = get_user_option( 'nf_form_preview_' . $this->_form_id );
             $this->_form_cache[ 'actions' ] = $preview_data[ 'actions' ];
         }
@@ -232,7 +281,7 @@ class NF_AJAX_Controllers_Submission extends NF_Abstracts_Controller
          * ninja_forms_submission_actions
          * ninja_forms_submission_actions_preview
          */
-        $this->_form_cache[ 'actions' ] = apply_filters( 'ninja_forms_submission_actions', $this->_form_cache[ 'actions' ], $this->_form_cache );
+        $this->_form_cache[ 'actions' ] = apply_filters( 'ninja_forms_submission_actions', $this->_form_cache[ 'actions' ], $this->_form_cache, $this->_form_data );
         if( $this->is_preview() ) {
             $this->_form_cache['actions'] = apply_filters('ninja_forms_submission_actions_preview', $this->_form_cache['actions'], $this->_form_cache);
         }

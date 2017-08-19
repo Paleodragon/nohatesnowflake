@@ -34,6 +34,7 @@ class NF_Fields_Product extends NF_Abstracts_Input
         $this->_settings[ 'product_price' ][ 'width' ] = 'full';
 
         add_filter( 'ninja_forms_merge_tag_value_product', array( $this, 'merge_tag_value' ), 10, 2 );
+        add_filter( 'ninja_forms_merge_tag_calc_value_product', array( $this, 'merge_tag_value' ), 10, 2 );
 
         add_filter( 'ninja_forms_localize_field_' . $this->_name, array( $this, 'filter_required_setting' ) );
         add_filter( 'ninja_forms_localize_field_' . $this->_name . '_preview', array( $this, 'filter_required_setting' ) );
@@ -57,7 +58,8 @@ class NF_Fields_Product extends NF_Abstracts_Input
             $related[ $type ] = &$data[ 'fields' ][ $key ]; // Assign by reference
         }
 
-        $total = floatval( $product[ 'product_price' ] );
+        $total = str_replace( array( ',', '$' ), '', $product[ 'product_price' ] );
+        $total = floatval( $total );
 
         if( isset( $related[ 'quantity' ][ 'value' ] ) && $related[ 'quantity' ][ 'value' ] ){
             $total = $total * $related[ 'quantity' ][ 'value' ];
@@ -106,7 +108,10 @@ class NF_Fields_Product extends NF_Abstracts_Input
 
     public function merge_tag_value( $value, $field )
     {
-        $product_price = preg_replace ('/[^\d,\.]/', '', $field[ 'product_price' ] );
+        // TODO: Replaced this to fix English locales.
+        // Other locales are still broken and will need to be addressed in refactor.
+//        $product_price = preg_replace ('/[^\d,\.]/', '', $field[ 'product_price' ] );
+        $product_price =  str_replace( array( ',', '$' ), '', $field[ 'product_price' ] );
 
         $product_quantity = ( isset( $field[ 'product_use_quantity' ] ) && 1 == $field[ 'product_use_quantity' ] ) ? $value : 1;
 
